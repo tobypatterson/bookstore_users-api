@@ -3,7 +3,8 @@ package date_utils
 import "time"
 
 const (
-	apiDateLayout = "2006-01-02T15:04:05"
+	apiDateLayout = "2006-01-02T15:04:05Z"
+	apiDbLayout   = "2006-01-02 15:04:05"
 )
 
 // GetNow returns a UTC date of the current time
@@ -13,6 +14,10 @@ func GetNow() time.Time {
 
 // GetNowString returns a UTC string representation of the current time
 func GetNowString() string {
-	now := GetNow()
-	return now.Format(apiDateLayout)
+	return GetNow().Format(apiDateLayout)
+}
+
+// GetNowDbFormat
+func GetNowDbFormat() string {
+	return GetNow().Format(apiDbLayout)
 }

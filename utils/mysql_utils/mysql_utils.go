@@ -1,6 +1,7 @@
 package mysql_utils
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/go-sql-driver/mysql"
@@ -22,5 +23,6 @@ func ParseError(err error) *errors.RestErr {
 		return errors.NewBadRequestError("invalid data")
 	}
 
+	fmt.Printf("Unknown Database Error: %s", sqlErr)
 	return errors.NewInternalServerError("error processing request")
 }
