@@ -7,8 +7,23 @@ import (
 	"github.com/tobypatterson/bookstore_users-api/utils/errors"
 )
 
+var (
+	UsersService usersServiceInterface = &usersService{}
+)
+
+type usersService struct {
+}
+
+type usersServiceInterface interface {
+	CreateUser(users.User) (*users.User, *errors.RestErr)
+	DeleteUser(int64) *errors.RestErr
+	GetUser(int64) (*users.User, *errors.RestErr)
+	UpdateUser(bool, users.User) (*users.User, *errors.RestErr)
+	SearchUser(string) ([]users.User, *errors.RestErr)
+}
+
 // CreateUser will create a user
-func CreateUser(user users.User) (*users.User, *errors.RestErr) {
+func (s *usersService) CreateUser(user users.User) (*users.User, *errors.RestErr) {
 
 	if err := user.Validate(); err != nil {
 		return nil, err
@@ -25,14 +40,14 @@ func CreateUser(user users.User) (*users.User, *errors.RestErr) {
 }
 
 // DeleteUser will delete a user
-func DeleteUser(userId int64) *errors.RestErr {
+func (s *usersService) DeleteUser(userId int64) *errors.RestErr {
 	user := users.User{Id: userId}
 
 	return user.Delete()
 }
 
 // GetUser will return a user
-func GetUser(userId int64) (*users.User, *errors.RestErr) {
+func (s *usersService) GetUser(userId int64) (*users.User, *errors.RestErr) {
 	if userId <= 0 {
 		return nil, errors.NewBadRequestError("Invalid User ID")
 	}
@@ -47,9 +62,9 @@ func GetUser(userId int64) (*users.User, *errors.RestErr) {
 }
 
 // UpdateUser will update the provided user
-func UpdateUser(isPartial bool, user users.User) (*users.User, *errors.RestErr) {
+func (s *usersService) UpdateUser(isPartial bool, user users.User) (*users.User, *errors.RestErr) {
 
-	current, err := GetUser(user.Id)
+	current, err := UsersService.GetUser(user.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -82,8 +97,8 @@ func UpdateUser(isPartial bool, user users.User) (*users.User, *errors.RestErr) 
 	return current, nil
 }
 
-// Search will find users by a given status
-func Search(status string) ([]users.User, *errors.RestErr) {
+// SearchUser will find users by a given status
+func (s *usersService) SearchUser(status string) ([]users.User, *errors.RestErr) {
 	dao := &users.User{}
 
 	return dao.FindUserByStatus(status)
