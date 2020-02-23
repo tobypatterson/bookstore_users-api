@@ -35,7 +35,8 @@ func Create(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, result)
+	isPublic := c.GetHeader("X-Public") == "true"
+	c.JSON(http.StatusCreated, result.Marshall(isPublic))
 }
 
 // Delete will delete a user
@@ -71,7 +72,8 @@ func Get(c *gin.Context) {
 		c.JSON(getError.Status, getError)
 		return
 	}
-	c.JSON(http.StatusOK, user)
+	isPublic := c.GetHeader("X-Public") == "true"
+	c.JSON(http.StatusOK, user.Marshall(isPublic))
 }
 
 // Search will search for users
@@ -85,6 +87,13 @@ func Search(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, users)
+
+	isPublic := c.GetHeader("X-Public") == "true"
+	result := make([]interface{}, len(users))
+	for idx, user := range users {
+		result[idx] = user.Marshall(isPublic)
+	}
+	c.JSON(http.StatusOK, result)
 }
 
 // Update will update a user
@@ -114,5 +123,6 @@ func Update(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, result)
+	isPublic := c.GetHeader("X-Public") == "true"
+	c.JSON(http.StatusCreated, result.Marshall(isPublic))
 }

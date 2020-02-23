@@ -14,8 +14,11 @@ type User struct {
 	Email       string `json:"email"`
 	DateCreated string `json:"date_created"`
 	Status      string `json:"status"`
-	Password    string `json:"-"`
+	Password    string `json:"password"`
 }
+
+// Users list of User entities
+type Users []User
 
 // Validate will validate the data for the user object
 func (user *User) Validate() *errors.RestErr {
